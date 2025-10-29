@@ -33,22 +33,53 @@ public class Server {
         try {
             // Keep listening for new clients until the server socket is closed
             while (!serverSocket.isClosed()) {
-                logger.info("Server started. Waiting for client...");
+                logger.info("Waiting for client...");
 
                 // Block and wait for incoming client connection
                 Socket socket = serverSocket.accept();
                 logger.info("A new client has connected!");
 
                 // Create a new ClientHandler for incoming client in a separate thread
-                ClientHandler clientHandler = new ClientHandler(socket);
-                new Thread(clientHandler).start();
+                //ClientHandler clientHandler = new ClientHandler(socket);
+                //new Thread(clientHandler).start();
             }
         } catch (IOException e) {
-            // Log the exception details and continue or stop the server depending on the severity
-            logger.log(Level.SEVERE,"Error accepting client connection", e);
-
+            // Log the exception details
+            logger.log(Level.SEVERE,"Error while accepting client connection", e);
+        }finally{
             // close the server socket
+            closeServerSocket();
+        }
+    }
+
+    /**
+     * Closes the server socket and releases the associated port.
+     */
+    public void closeServerSocket()
+    {
+        // Check if there is actual socket object before closing the socket
+        if(serverSocket != null)
+        {
+            try {
+                logger.log(Level.INFO,"Closing server socket.");
+                serverSocket.close();
+                logger.log(Level.INFO,"Server stopped successfully.");
+            } catch (IOException e) {
+                logger.log(Level.WARNING,"Error While closing server socket", e.getMessage());
             }
+        }
+    }
+    public static void main(String[] args) {
+        try {
+            ServerSocket serverSocket = new ServerSocket(8888);
+            Server server = new Server(serverSocket);
+            logger.info("Server started.");
+            server.startServer();
+        } catch (IOException e) {
+            logger.log(Level.SEVERE, "Error while starting the server.",e);
+        }
+
     }
 }
+
 
