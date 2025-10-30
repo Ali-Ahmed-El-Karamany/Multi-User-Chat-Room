@@ -21,6 +21,7 @@ public class Server {
      * @param serverSocket the ServerSocket to use for listening to client connections
      */
     public Server(ServerSocket serverSocket) {
+
         this.serverSocket = serverSocket;
     }
 
@@ -40,8 +41,8 @@ public class Server {
                 logger.info("A new client has connected!");
 
                 // Create a new ClientHandler for incoming client in a separate thread
-                //ClientHandler clientHandler = new ClientHandler(socket);
-                //new Thread(clientHandler).start();
+                ClientHandler clientHandler = new ClientHandler(socket);
+                new Thread(clientHandler).start();
             }
         } catch (IOException e) {
             // Log the exception details
@@ -55,8 +56,7 @@ public class Server {
     /**
      * Closes the server socket and releases the associated port.
      */
-    public void closeServerSocket()
-    {
+    public void closeServerSocket() {
         // Check if there is actual socket object before closing the socket
         if(serverSocket != null)
         {
@@ -78,7 +78,6 @@ public class Server {
         } catch (IOException e) {
             logger.log(Level.SEVERE, "Error while starting the server.",e);
         }
-
     }
 }
 
