@@ -54,6 +54,7 @@ public class ClientHandler implements Runnable{
 
     /**
      * Listens for incoming messages and broadcasts them to all other clients.
+     * Handles client disconnection gracefully, if "exit" command sent.
      */
     @Override
     public void run(){
@@ -61,7 +62,12 @@ public class ClientHandler implements Runnable{
 
         try {
             // Continuously read messages while the connection is active
-            while((message = reader.readLine()) != null && socket.isConnected()) {
+            while((message = reader.readLine()) != null) {
+                // Handles client disconnection request
+                if(message.equalsIgnoreCase("exit")) {
+                    logger.log(Level.INFO, clientUsername + ": Requested to disconnect");
+                    break;
+                }
                 broadCastMSG(message);
             }
 

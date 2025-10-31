@@ -47,15 +47,29 @@ public class Client {
             writer.newLine();
             writer.flush();
 
+            System.out.println("To exit the chat room type 'exit'.");
+
             // listen for user input and send messages
             while(!socket.isClosed()) {
                 String message = scanner.nextLine();
+
+                // Check if the client wants to leave the chat
+                if(message.equalsIgnoreCase("exit")) {
+                    // Notify the server about the disconnection request
+                    writer.write(message);
+                    writer.newLine();
+                    writer.flush();
+
+                    System.out.println("Disconnecting from server.");
+                    break;
+                }
+
                 writer.write(username + ": " + message);
                 writer.newLine();
                 writer.flush();
             }
         } catch (IOException e) {
-            logger.log(Level.WARNING,username + ": " + "Failed to send Message.",e);
+            logger.log(Level.WARNING,username + ": Failed to send Message.",e);
         }finally {
             // close the socket and I/O streams then remove client reference
             closeSocketResources();
@@ -76,7 +90,7 @@ public class Client {
                     System.out.println(message);
                 }
             } catch (IOException e) {
-                logger.log(Level.WARNING,username + ": " + "Connection Lost.", e);
+                logger.log(Level.WARNING,username + ": Connection Lost.", e);
             }finally {
                 // close the socket and I/O streams then remove client reference
                 closeSocketResources();
